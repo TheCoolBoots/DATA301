@@ -26,7 +26,7 @@ class assignment1():
         arr9 = self.pt9()
         #print(arr9)
 
-        arr10 = np.apply_along_axis(lambda arr: np.sum(arr)/10.0, 1, arr1)
+        arr10 = np.apply_along_axis(lambda arr: np.mean(arr), 1, arr1)
         #print(arr10)
 
 
@@ -64,7 +64,9 @@ class assignment1():
     def pt5(self):
         pass
 
-    """returns the square root of the numbers in the array from Q3"""
+    """
+    returns the square root of the numbers in the array from Q3
+    """
     def pt6(self):
         pass
 
@@ -72,7 +74,8 @@ class assignment1():
     Write code that returns the array from Q1, where the numbers on the diagonal are incremented by 1
     """
     def pt7(self, pt1):
-        diagonals = np.zeros((10, 10))
+        # can also do return pt1[[a,a]] += 1
+        diagonals = np.zeros(pt1.shape)
         np.fill_diagonal(diagonals, 1)
         return pt1+diagonals
 
