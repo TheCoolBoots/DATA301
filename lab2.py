@@ -11,48 +11,16 @@ class lab2():
         # self.q2()
         # self.q3()
         # self.q4()
-        self.q5()
+        # self.q5()
+        self.q6()
 
-    def tester(self):
-        # athleteEventsTest = pd.read_csv("athlete_events_test.csv").fillna(0)
-        # athleteEventsTest = athleteEventsTest[athleteEventsTest["Medal"] != 0][["NOC", "Medal"]]
-        # nocRegionsTest = pd.read_csv("noc_regions_test.csv")[["NOC", "region"]]
-        # merged = pd.merge(nocRegionsTest, athleteEventsTest)
-        # print(merged)
-
-        # athleteEventsTest = pd.read_csv("athlete_events_test.csv").fillna(0)
-        # athleteEventsTest = athleteEventsTest[athleteEventsTest["Medal"] != 0][["ID", "Name", "Medal"]]
-        # medalCountsPerAthlete = athleteEventsTest["ID"].value_counts().to_frame()
-        # medalCountsPerAthlete["MedalCount"] = medalCountsPerAthlete["ID"]
-        # medalCountsPerAthlete["ID"] = medalCountsPerAthlete.index
-        # print(medalCountsPerAthlete)
-        # athleteEventsTest = athleteEventsTest.set_index("ID").drop_duplicates().reset_index()
-        # print(athleteEventsTest)
-        # merged = pd.merge(athleteEventsTest, medalCountsPerAthlete)
-        # print(merged)
-
-        # athleteEventsTest = pd.read_csv("athlete_events_test.csv").fillna(0)[["NOC", "Year", "Medal"]]
-        # athleteEventsTest = athleteEventsTest[athleteEventsTest["Medal"] != 0]
-        # athleteEventsTest = athleteEventsTest[athleteEventsTest["Year"] >= 1960]
-        # nocGroup = athleteEventsTest.groupby("NOC")
-        # yearCounts = nocGroup['Year'].value_counts().unstack()
-        # print(yearCounts)
-        # popSizeTest = pd.read_csv("population_size_test.csv")[["Country Code", "1992", "2012"]]
-        # print(popSizeTest)
-
-        pass
-
-    # def q2(self):
-    #     golds = self.athleteEvents[self.athleteEvents["Medal"] == "Gold"][["NOC", "Medal"]]
-    #     golds["NOC"] = golds["NOC"].map(lambda noc: self.nocRegions[noc])
-    #     golds = golds["NOC"].value_counts()
-    #     print(golds)
 
     def q2(self):
         golds = self.athleteEvents[self.athleteEvents["Medal"] == "Gold"][["NOC", "Medal"]]
         nocRegions = pd.read_csv("noc_regions.csv")[["NOC", "region"]]
         merged = pd.merge(golds, nocRegions)
         print(merged["region"].value_counts())
+
 
 
     def q3(self):
@@ -74,8 +42,6 @@ class lab2():
         medalCountsPerAthlete["ID"] = medalCountsPerAthlete.index
         medals = medals.set_index("ID").drop_duplicates().reset_index()
         merged = pd.merge(medals, medalCountsPerAthlete)
-
-        # print(merged)
         print(merged["MedalCount"].corr(merged["Height"]))
 
 
@@ -83,37 +49,46 @@ class lab2():
         athleteEvents = pd.read_csv("athlete_events.csv").fillna(0)[["NOC", "Year", "Medal"]]
         athleteEvents = athleteEvents[athleteEvents["Medal"] != 0]
         athleteEvents = athleteEvents[athleteEvents["Year"] >= 1960]
-        print(athleteEvents.head(20))
         nocGroup = athleteEvents.groupby("NOC")
-        yearCounts = nocGroup['Year'].value_counts().fillna(0)
-        yearCounts.columns = ['MedalCount']
-        yearCounts.name = "MedalCount"
+        yearCounts = nocGroup['Year'].value_counts()
+        yearCounts.name = "yearCount"
         yearCounts = yearCounts.reset_index()
 
+        years = yearCounts["Year"].drop_duplicates()
 
-        # print(yearCounts)
-        popSize = pd.read_csv("population_size.csv").drop(columns=["Country Name","Indicator Name","Indicator Code"])
-        popSize = popSize.rename(columns = {"Country Code": "NOC"}).set_index("NOC").stack()
+        popSize = pd.read_csv("population_size.csv").drop(columns=["Country Name","Indicator Name","Indicator Code"]).set_index("Country Code")
+        popSize.dropna(how='all', axis='columns',inplace=True)
+        popSize.columns = popSize.columns.map(lambda str: int(str))
+        popSize = popSize.stack().reset_index()
+        popSize.columns = ["NOC", "Year", "Population"]
         popSize.name = "popSize"
-        popSize = popSize.reset_index()
-        # print(popSize)
 
-        print(yearCounts.head(30))
-        # print('\n')
-        print(popSize.head(30))
+        merged = yearCounts.merge(popSize, left_on = ["Year", "NOC"], right_on = ["Year", "NOC"])
 
-        #print(yearCounts[["NOC", 1960]].set_index("NOC")[1960])
-        #print(popSize[["NOC", "1960"]].set_index("NOC")["1960"])
+        tmp = merged["Year"]
+        merged["Year"] = merged["NOC"]
+        merged["NOC"] = tmp
+        merged.columns = ["Year", "NOC", "YearCount", "Population"] 
 
-
+        merged.set_index(["Year", "NOC"], inplace = True)
         
+        output = pd.DataFrame()
+        output["Year"] = years
+        output["Correlation"] = output["Year"].map(lambda year: merged.loc[year][:]["YearCount"].corr(merged.loc[year][:]["Population"]))
+        print(output.sort_values(by = "Year"))
 
-        
 
-    def getYearlyCalculation(self, country, yearlyPop, medalsPerCountry):
-        pass
+    def q6(self):
+        athleteEvents = pd.read_csv("athlete_events.csv").fillna(0)[["NOC", "Medal"]]
+        athleteEvents = athleteEvents[athleteEvents["Medal"] != 0]
+        medals = athleteEvents.groupby("NOC").count()
+        print(medals.head(10))
+        gdp = pd.read_csv("gdp.csv").drop(columns="Country Name")
+        gdp.columns = ["NOC","Year", "Value"]
+        avgGDP = gdp.groupby("NOC")["Value"].mean()
+        print(avgGDP.head(10))
+        merged = pd.merge(medals, avgGDP, how = "inner", on = "NOC")
+        print(merged["Medal"].corr(merged["Value"]))
 
-
-    
 
 lab2instance = lab2()
