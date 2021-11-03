@@ -20,7 +20,7 @@ rawData = {
 
 q1_1 = pd.DataFrame(rawData)
 q1_2 = q1_1.pivot(index = "Date", columns = "Company")
-# print(q1_2)
+print(q1_1)
 
 
 ''' QUESTION 2 '''
@@ -30,7 +30,7 @@ q2_1 = q1_1.sort_values(by="Date").set_index(['Date', 'Company'])
 
 ''' QUESTION 3 '''
 q3_1 = q1_1.pivot_table(index = "Company",  aggfunc="mean")
-# print(q3_1)
+print(q3_1)
 
 
 ''' QUESTION 4 '''
@@ -67,9 +67,9 @@ q7_1 = pd.Series(values, index=businessDays)
 
 
 ''' QUESTION 8 '''
-days2018 = pd.date_range("2018-01-01", "2018-12-31").map(lambda date: date.day_of_week)
+days2018 = pd.date_range("2018-01-01", "2018-12-31").map(lambda date: date.strftime('%A'))  # used to be date.day_of_week
 daysCount = pd.Series(days2018).value_counts()
-daysCount.index = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+# daysCount.index = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 # print(daysCount)
 
 
