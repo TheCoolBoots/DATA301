@@ -8,10 +8,15 @@ class lab2():
         # self.nocRegions = dict(self.nocRegions[["NOC", "region"]].values)
 
         # self.tester()
-        # self.q2()
-        # self.q3()
-        # self.q4()
-        # self.q5()
+        print("\n==============Q2================")
+        self.q2()
+        print("\n==============Q3================")
+        self.q3()
+        print("\n==============Q4================")
+        self.q4()
+        print("\n==============Q5================")
+        self.q5()
+        print("\n==============Q6================")
         self.q6()
 
 
@@ -82,11 +87,11 @@ class lab2():
         athleteEvents = pd.read_csv("athlete_events.csv").fillna(0)[["NOC", "Medal"]]
         athleteEvents = athleteEvents[athleteEvents["Medal"] != 0]
         medals = athleteEvents.groupby("NOC").count()
-        print(medals.head(10))
+        # print(medals.head(10))
         gdp = pd.read_csv("gdp.csv").drop(columns="Country Name")
         gdp.columns = ["NOC","Year", "Value"]
         avgGDP = gdp.groupby("NOC")["Value"].mean()
-        print(avgGDP.head(10))
+        # print(avgGDP.head(10))
         merged = pd.merge(medals, avgGDP, how = "inner", on = "NOC")
         print(merged["Medal"].corr(merged["Value"]))
 

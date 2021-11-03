@@ -1,7 +1,7 @@
 import numpy as np
 
 def generateClassGrades():
-    grades = np.genfromtxt('IntroToDataScience/grades.txt', delimiter='\t')
+    grades = np.genfromtxt('grades.txt', delimiter='\t')
     grades = np.nan_to_num(grades)
     maxpts = grades[-1]
     grades = grades[1:-1]
@@ -40,7 +40,7 @@ def getLetterGrade(studentGrades, maxpts):
         return [studentGrades[0], 0]
 
 
-def calculateComponentGrade(grades, maxPts, weight : float):
+def calculateComponentGrade(grades, maxPts, weight):
     return weight * sum( (grades / maxPts) / len(grades))
 
 def calculateAssignmentGrade(grades, maxpts, weight):
