@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-import numpy as np
+import re
 
 alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 alphabetLower = 'abcdefghijklmnopqrstuvwxyz'
@@ -32,13 +32,15 @@ def getPotentialVignereKeys(cipherText, maxKeyLength, keyLength = None):
 
     if keyLen == None:
         for i in range(2, maxKeyLen + 1):
-            potentialKey = ""
+            potentialKey = []
             
             for j in range(0, i):
                 # print(str(j) + "=============")
-                vals = pd.Series(list(cipherTextStr[j::i]))
+                rawString = re.sub(r'\W+', '', cipherTextStr[j::i])
+
+                vals = pd.Series(list(rawString))
                 valCount = vals.value_counts()
-                maxFrequency = valCount.index[0]
+                maxFrequencies = "".join(list(valCount.index[0:3]))
                 
                 # print(cipherTextStr[j::i])
                 # print(maxFrequency)
@@ -47,10 +49,24 @@ def getPotentialVignereKeys(cipherText, maxKeyLength, keyLength = None):
                 # count how many of each letter there is
                 # assume the highest frequency letter is E
                 # potentialKey[j] = alphabet[ord(hFreq) - 4]
-
-                potentialKey += alphabet[ord(maxFrequency) % 65 - 4]
+                # potentialKey += alphabet[ord(maxFrequency.upper()) % 65 - 4]
+                potentialKey.append(maxFrequencies)
             
             potentialKeys.append(potentialKey)
+    else:
+        potentialKey = []
+            
+        for j in range(0, keyLen):
+            rawString = re.sub(r'\W+', '', cipherTextStr[j::keyLen])
+
+            vals = pd.Series(list(rawString))
+            valCount = vals.value_counts()
+            print(valCount)
+            maxFrequencies = "".join(list(valCount.index[0:3]))
+            
+            potentialKey.append(maxFrequencies)
+        
+        potentialKeys.append(potentialKey)
     
     print(potentialKeys)
     return potentialKeys
