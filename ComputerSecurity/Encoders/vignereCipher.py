@@ -1,9 +1,6 @@
 import sys
 
-alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-alphabetLower = 'abcdefghijklmnopqrstuvwxyz'
-
-def vignereCipher(inputFile, key: str, shift):
+def vignereCipher(inputFile, key, shift):
     try:
         inputFile = open(inputFile)
         inputText = inputFile.read()
@@ -23,10 +20,10 @@ def vignereCipher(inputFile, key: str, shift):
 
     for i, char in enumerate(inputText):
         if 65 <= ord(char) and ord(char) <= 90: # if the character is an uppercase letter
-            newChar = alphabet[(ord(char) + ord(key[i % len(key)]) - 130) % 26]
+            newChar = chr((ord(char) - 65 + ord(key[i % len(key)]) - 65) % 26 + 65)
             cipherText += newChar
         elif 97 <= ord(char) and ord(char) <= 122: # if the character is a lowercase letter
-            newChar = alphabetLower[(ord(char.upper()) + ord(key[i % len(key)]) - 130) % 26]
+            newChar = chr((ord(char) - 97 + ord(key[i % len(key)].lower) - 97) % 26 + 97)
             cipherText += newChar
         else:       # add any other characters without cipher
             cipherText += char

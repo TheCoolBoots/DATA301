@@ -16,13 +16,15 @@ def getPotentialVignereKeys(cipherText, key):
         cipherTextFile.close()
 
     plainText = ""
-    for i in range(len(cipherTextStr)):
-        if 65 <= ord(cipherTextStr[i]) and ord(cipherTextStr[i]) <= 90:
-            plainText += alphabet[ord(cipherTextStr[i]) - ord(key[i % len(key)])]
-        elif 97 <= ord(cipherTextStr[i]) and ord(cipherTextStr[i]) <= 122:
-            plainText += alphabetLower[ord(cipherTextStr[i]) - ord(key[i % len(key)]) - 32]
-        else:
-            plainText += cipherTextStr[i]
+    for i, char in enumerate(cipherTextStr):
+        if 65 <= ord(char) and ord(char) <= 90: # if the character is an uppercase letter
+            newChar = ord(char) - ord(key[i % len(key)].upper())
+            plainText += newChar
+        elif 97 <= ord(char) and ord(char) <= 122: # if the character is a lowercase letter
+            newChar = chr((ord(char) - 97 + ord(key[i % len(key)].lower) - 97) % 26 + 97)
+            plainText += newChar
+        else:       # add any other characters without cipher
+            plainText += char
 
     print(plainText)
             
