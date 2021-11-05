@@ -23,6 +23,11 @@ stockCombinations = list(combinations(stocks, 2))
 correlations = [0.0] * 435
 stockCombinationsSeries = pd.Series(correlations, index = pd.MultiIndex.from_tuples(stockCombinations))
 
+
+# stockCombinationsSeries['AAPL','BA'] = 10
+# print(stockCombinationsSeries)
+# print(stockCombinationsSeries['AAPL','BA'])
+
 # download all the data for each stock
 # store in a dictionary with stock symbols as keys
 stockDataFrames = {}
@@ -34,7 +39,7 @@ for stock in stocks:
 # fill in corresponding place in stockCombinationsDF with resulting value
 for combination in stockCombinations:
     corr = stockDataFrames[combination[0]]['Close'].corr(stockDataFrames[combination[1]]['Close'])
-    stockCombinationsSeries.at[combination[0],combination[1]] = corr
+    stockCombinationsSeries[combination[0], combination[1]] = corr
 
 print(stockCombinationsSeries.sort_values(ascending=False))
 

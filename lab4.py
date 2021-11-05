@@ -4,20 +4,34 @@ import requests
 from lxml import html
 
 
-pageContent1 = requests.get('https://en.wikipedia.org/wiki/List_of_sovereign_states')
+pageContent1 = requests.get('https://en.wikipedia.org/wiki/List_of_countries_by_GDP_%28nominal%29')
 tree1 = html.fromstring(pageContent1.content)
-# commonAndFormalNames = tree1.xpath('//table[1]/tbody/tr[3]/td[0]/b[1]/a[1]/text()')
-afganistan = tree1.xpath('//*[@id="mw-content-text"]/div[1]/table/tbody/tr[4]/td[1]/b/a/text()')
 
-print(afganistan)
+countriesGDP = tree1.xpath('//div[1]/table[2]/tbody/tr/td[1]/a/text()')
+for index, str in enumerate(countriesGDP):
+    countriesGDP[index] = str[:-2]
+estGDP = tree1.xpath('//div[1]/table[2]/tbody/tr/td[5]/text()')
 
-# pageContent=requests.get('https://en.wikipedia.org/wiki/List_of_Olympic_medalists_in_judo')
-# tree = html.fromstring(pageContent.content)
-# gold=tree.xpath('//table[1]/tbody/tr[@valign="top"]/td[2]/a[1]/text()')
-# silver=tree.xpath('//table[1]/tbody/tr[@valign="top"]/td[3]/a[1]/text()')
-# bronze1=tree.xpath('//table[1]/tbody/tr[@valign="top"]/td[4]/a[1]/text()')
-# bronze2=tree.xpath('//table[1]/tbody/tr[not(@valign="top")]/td[1]/a[1]/text()')
-# games=tree.xpath('//table[1]/tbody/tr[@valign="top"]/td[1]/a[1]/text()')
-# df=pd.DataFrame({'games':games,'gold':gold,'silver':silver,'bronze1':bronze1,'bronze2':bronze2})
-# df=df.set_index('games')
-# print(df)
+# print(countriesGDP)
+# print(estGDP)
+
+pageContent2 = requests.get('https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population')
+tree2 = html.fromstring(pageContent2.content)
+
+countriesPop = tree2.xpath('//div[1]/table/tbody/tr/td[1]/a/text()')
+population = tree2.xpath('//div[1]/table/tbody/tr/td[3]/text()')
+
+# print(countriesPop)
+# print(population)
+
+gdpFrame = pd.DataFrame({'country': countriesGDP, 'estGDP': estGDP})
+popFrame = pd.DataFrame({'country': countriesPop, 'population': population})
+
+gdpFrame['estGDP'] = gdpFrame['estGDP'].apply(lambda s : int(s.replace(',','')))
+popFrame['population'] = popFrame['population'].apply(lambda s : int(s.replace(',','')))
+
+joined = pd.merge(gdpFrame, popFrame, on='country', how='inner')
+
+print(joined['estGDP'].corr(joined['population']))
+
+# print(joined)
