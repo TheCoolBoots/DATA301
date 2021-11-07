@@ -1,0 +1,116 @@
+Q2:
+<? xml version ="1.0" standalone = "yes" ?>
+<University>
+    <Student studentID="420" courses="369 702">
+        <Name>Joe</Name>
+        <Address>
+            <City>San Luis Obispo</City>
+            <Street>1291 W Newport</Street>
+        </Address>
+        <Address>
+            <City>Palos Verdes</City>
+            <Street>52 Lariat Lane</Street>
+        </Address>
+    </Student>
+    <Student studentID="421" courses="369">
+        <Name>Pippin</Name>
+        <Address>
+            <City>Washington DC</City>
+            <Street>1 Washington</Street>
+        </Address>
+    </Student>
+    <Teacher employeeID="2" courses="369">
+        <Name>Jim Bean</Name>
+        <Address>
+            <City>Los Angles</City>
+            <Street>437 Narrowway</Street>
+        </Address>
+    </Teacher>
+    <Teacher employeeID="3" courses="702">
+        <Name>Senna Check</Name>
+        <Address>
+            <City>San Antonio</City>
+            <Street>8315 Gold st.</Street>
+        </Address>
+    </Teacher>
+    <Course courseID = "369" teacher = "2" students = "420 421">
+        <Name>Strategic Dungeon Mastering</Name>
+    </Course>
+    <Course courseID = "702" teacher = "3" students = "420">
+        <Name>Practical Furbees</Name>
+    </Course>
+</University>
+
+Q3:
+//@studentID[contains(@courses, CSC366)]
+
+
+Q4:
+{
+    University: {
+        Student: [
+            {
+                Name: "Joe",
+                Address: [
+                    {
+                        City: "San Luis Obispo",
+                        Street: "1291 W Newport"
+                    },
+                    {
+                        City: "Palos Verdes",
+                        Street: "52 Lariat Lane"
+                    }
+                ],
+                studentID: "420",
+                courses: "369 702"
+            },
+            {
+                Name: "Pippin",
+                Address: {
+                    City: "Washington DC",
+                    Street: "1 Washington"
+                },
+                studentID: "421",
+                courses: "369"
+            }
+        ],
+        Teacher: [
+            {
+                Name: "Jim Bean",
+                Address: {
+                    City: "Los Angles",
+                    Street: "437 Narrowway"
+                },
+                employeeID: "2",
+                courses: "369"
+            },
+            {
+                Name: "Senna Check",
+                Address: {
+                    City: "San Antonio",
+                    Street: "8315 Gold st."
+                },
+                employeeID: "3",
+                courses: "702"
+            }
+        ],
+        Course: [
+            {
+                Name: "Strategic Dungeon Mastering",
+                courseID: "369",
+                teacher: "2",
+                students: "420 421"
+            },
+            {
+                Name: "Practical Furbees",
+                courseID: "702",
+                teacher: "3",
+                students: "420"
+            }
+        ]
+    }
+}
+
+
+Q5:
+//studentID[contains(courses, CSC366)]
