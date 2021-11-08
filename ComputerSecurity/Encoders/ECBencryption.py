@@ -1,10 +1,10 @@
 from Crypto.Cipher import AES
-
-from Encoders.OTPEncrypt import generateRandomKey
-
-# cipher = AES.new(key, AES.MODE_ECB)
+import random
 
 blockSizeBytes = 16
+
+def generateRandomKey(length):
+    return ''.join([chr(random.randint(0, 255)) for _ in range(length)])
 
 def xorStrings(str1, str2):
     if len(str1) != len(str2):
@@ -72,21 +72,25 @@ def encryptBMP(filepath):
 
     with open(filepath, 'r') as ecbOutput:
         txt = ecbOutput.read()
-        header = txt[0:54]
-        ecbEncryptedMessage = ECBEncrypt(key1, txt)
-        ecbEncryptedMessage = header + ecbEncryptedMessage[54:]
+
+    header = txt[0:54]
+    ecbEncryptedMessage = ECBEncrypt(key1, txt)
+    ecbEncryptedMessage = header + ecbEncryptedMessage[54:]
 
     with open('ECB.bmp', 'w+') as file:
         file.write(ecbEncryptedMessage)
 
     with open(filepath, 'r') as ecbOutput:
         txt = ecbOutput.read()
-        header = txt[0:54]
-        ecbEncryptedMessage = CBCEncrypt(key2, initVector, txt)
-        ecbEncryptedMessage = header + ecbEncryptedMessage[54:]
+        
+    header = txt[0:54]
+    ecbEncryptedMessage = CBCEncrypt(key2, initVector, txt)
+    ecbEncryptedMessage = header + ecbEncryptedMessage[54:]
 
     with open('CBC.bmp', 'w+') as file:
         file.write(ecbEncryptedMessage)
+
+encryptBMP('cp-logo.bmp')
 
 # print(padPlaintext("ABCDEF").encode('ascii'))
 # tmp = ECBEncrypt("aaaaaaaaaaaaaaaa", "b"*16+"c"*8)
