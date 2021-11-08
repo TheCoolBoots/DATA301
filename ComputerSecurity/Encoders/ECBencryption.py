@@ -1,4 +1,3 @@
-from Crypto.Cipher import AES
 import random
 
 blockSizeBytes = 16
@@ -54,6 +53,26 @@ def CBCEncrypt(key, initVector, plaintext):
     
     return cipherText
 
+def CBCDecrypt(key, initVector, cipherText):
+    if len(key) != blockSizeBytes:
+        print("ERROR: key is not of length " + blockSizeBytes)
+        return
+    if len(initVector) != blockSizeBytes:
+        print("ERROR: key is not of length " + blockSizeBytes)
+        return
+    
+    plainText = ""
+
+    lastBlock = initVector
+
+    for i in range(0, len(cipherText)//blockSizeBytes):
+        prePlaintext = xorStrings(cipherText[i*blockSizeBytes: i*blockSizeBytes+blockSizeBytes], key)
+        newPlaintext = xorStrings(prePlaintext, lastBlock)
+        lastBlock = cipherText[i*blockSizeBytes: i*blockSizeBytes+blockSizeBytes]
+        plainText += newPlaintext
+    
+    return plainText
+
 
 def padPlaintext(plaintext):
     if(len(plaintext) % blockSizeBytes != 0):
@@ -70,14 +89,15 @@ def encryptBMP(filepath):
     key2 = generateRandomKey(blockSizeBytes)
     initVector = generateRandomKey(blockSizeBytes)
 
-    with open(filepath, 'r') as ecbOutput:
+    with open(filepath, 'rb') as ecbOutput:
         txt = ecbOutput.read()
+        txt = str(txt)
 
     header = txt[0:54]
     ecbEncryptedMessage = ECBEncrypt(key1, txt)
     ecbEncryptedMessage = header + ecbEncryptedMessage[54:]
 
-    with open('ECB.bmp', 'w+') as file:
+    with open('ECB.bmp', 'wb+') as file:
         file.write(ecbEncryptedMessage)
 
     with open(filepath, 'r') as ecbOutput:
