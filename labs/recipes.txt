@@ -4,7 +4,7 @@
         "ingredients": [
             {
                 "quantity": "1",
-                "name": " beef roast",
+                "name": "beef roast",
                 "type": "Meat"
             },
             {
@@ -48,7 +48,7 @@
         "ingredients": [
             {
                 "quantity": "1 lb",
-                "name": " asparagus",
+                "name": "asparagus",
                 "type": "Produce"
             },
             {
@@ -63,7 +63,7 @@
             }
         ],
         "steps": [
-            "Preheat oven to 425°F.",
+            "Preheat oven to 425ï¿½F.",
             "Cut off the woody bottom part of the asparagus spears and discard.",
             "With a vegetable peeler, peel off the skin on the bottom 2-3 inches of the spears (this keeps the asparagus from being all.\",string.\", and if you eat asparagus you know what I mean by that).",
             "Place asparagus on foil-lined baking sheet and drizzle with olive oil.",
@@ -372,7 +372,7 @@
             "Simmer raisins and water over medium heat until raisins are plump, about 15 minutes.",
             "Drain raisins, reserving the liquid.",
             "Add enough water to reserved liquid to measure 1/2 cup.",
-            "Heat oven to 400°.",
+            "Heat oven to 400ï¿½.",
             "Mix thoroughly shortening, sugar, eggs and vanilla.",
             "Stir in reserved liquid.",
             "Blend in remaining ingredients.",
@@ -400,7 +400,7 @@
         "ingredients": [
             {
                 "quantity": "2-1/2 cups",
-                "name": "rolled oats, (not instant)",
+                "name": "rolled oats (not instant)",
                 "type": "Baking"
             },
             {
@@ -454,8 +454,8 @@
             "Whisk cornstarch with 2 tbsp (25 mL) water; whisk into blueberries and boil, stirring, until thickened, about 1 minute.",
             "Place plastic wrap directly on surface; refrigerate until cooled, about 1 hour.",
             "In large bowl, whisk together oats, flour, sugar, orange rind and salt ; with pastry blender, cut in butter until in coarse crumbs.",
-            "Press half into 8-inch (2 L) square parchment paper–lined metal cake pan; spread with blueberry filling.",
-            "Bake in centre of 350°F oven until light golden, about 45 minutes.",
+            "Press half into 8-inch (2 L) square parchment paperï¿½lined metal cake pan; spread with blueberry filling.",
+            "Bake in centre of 350ï¿½F oven until light golden, about 45 minutes.",
             "Let cool on rack before cutting into squares.",
             "(Make-ahead: Cover and refrigerate for up to 2 days or overwrap with heavy-duty foil and freeze for up to 2 weeks.)"
         ],
