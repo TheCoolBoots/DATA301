@@ -113,4 +113,16 @@ Q4:
 
 
 Q5:
-//studentID[contains(courses, CSC366)]
+import json
+
+with open('jsontest.json', 'r') as file:
+    jsonContent = json.load(file)
+
+    students = jsonContent['University']['Student']
+    ids = []
+    for student in students:
+        if 'CSC366' in student['courses']:
+            ids.append(student['studentID'])
+
+    
+    print(ids)

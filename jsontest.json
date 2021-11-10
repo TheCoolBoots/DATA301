@@ -1,0 +1,64 @@
+{
+    "University": {
+        "Student": [
+            {
+                "Name": "Joe",
+                "Address": [
+                    {
+                        "City": "San Luis Obispo",
+                        "Street": "1291 W Newport"
+                    },
+                    {
+                        "City": "Palos Verdes",
+                        "Street": "52 Lariat Lane"
+                    }
+                ],
+                "studentID": "420",
+                "courses": "369 702"
+            },
+            {
+                "Name": "Pippin",
+                "Address": {
+                    "City": "Washington DC",
+                    "Street": "1 Washington"
+                },
+                "studentID": "421",
+                "courses": "369 CSC366"
+            }
+        ],
+        "Teacher": [
+            {
+                "Name": "Jim Bean",
+                "Address": {
+                    "City": "Los Angles",
+                    "Street": "437 Narrowway"
+                },
+                "employeeID": "2",
+                "courses": "369"
+            },
+            {
+                "Name": "Senna Check",
+                "Address": {
+                    "City": "San Antonio",
+                    "Street": "8315 Gold st."
+                },
+                "employeeID": "3",
+                "courses": "702"
+            }
+        ],
+        "Course": [
+            {
+                "Name": "Strategic Dungeon Mastering",
+                "courseID": "369",
+                "teacher": "2",
+                "students": "420 421"
+            },
+            {
+                "Name": "Practical Furbees",
+                "courseID": "702",
+                "teacher": "3",
+                "students": "420"
+            }
+        ]
+    }
+}

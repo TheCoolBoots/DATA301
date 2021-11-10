@@ -111,10 +111,10 @@ def twoTimeEncrypt(file1, file2):
     
 
 
-mustangEncrypted = encryptBMP('cp-logo.bmp')
-mustangDecrypted = decryptBMP('cipherImg.bmp', 'bmpKey')
+# mustangEncrypted = encryptBMP('cp-logo.bmp')
+# mustangDecrypted = decryptBMP('cipherImg.bmp', 'bmpKey')
 
-print(mustangEncrypted[2] == mustangDecrypted)
+# print(mustangEncrypted[2] == mustangDecrypted)
 
 # doubleEncrypt = twoTimeEncrypt('cp-logo.bmp', 'mustang.bmp')
 
