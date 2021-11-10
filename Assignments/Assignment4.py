@@ -7,19 +7,24 @@ d3 = 'a c c'.split(' ')
 
 query = 'a b'.split(' ')
 
+# get list of all words in all documents
+# for each document, for each word, increment corresponding index by number of occurances in document
 termFrequency = {"d1" : [4, 1, 1],
                         "d2" : [3, 2, 2],
                         "d3" : [1, 0, 2],
                         "d4" : [1, 1, 0]}
 
+
 allLetters = list(set(d1 + d2 + d3))
 
 frame = pd.DataFrame({"terms" :allLetters})
+# create a column of term frequencies for each document
 frame['TFd1'] = frame['terms'].apply(lambda letter: d1.count(letter)/max(termFrequency['d1']))
 frame['TFd2'] = frame['terms'].apply(lambda letter: d2.count(letter)/max(termFrequency['d2']))
 frame['TFd3'] = frame['terms'].apply(lambda letter: d3.count(letter)/max(termFrequency['d3']))
 frame['TFquery'] = frame['terms'].apply(lambda letter: query.count(letter)/max(termFrequency['d4']))
 
+# sum up the occurances for each word in each document to get document frequency
 frame['DF1'] = frame['terms'].apply(lambda letter: 1 if letter in d1 else 0)
 frame['DF2'] = frame['terms'].apply(lambda letter: 1 if letter in d2 else 0)
 frame['DF3'] = frame['terms'].apply(lambda letter: 1 if letter in d3 else 0)
@@ -27,8 +32,10 @@ frame['DF3'] = frame['terms'].apply(lambda letter: 1 if letter in d3 else 0)
 frame['DF'] = frame['DF1'] + frame['DF2'] + frame['DF3']
 frame.drop(columns=['DF1', 'DF2', 'DF3'], inplace=True)
 
+# calculate inverse document frequency log2(numDocuments/documentFrequencyOfWord)
 frame['IDF'] = np.log2(3/frame['DF']) # shouldn’t include query in documents
 
+# calculate TFIDF for each document
 frame['TFIDFd1'] = frame['TFd1'] * frame['IDF']
 frame['TFIDFd2'] = frame['TFd2'] * frame['IDF']
 frame['TFIDFd3'] = frame['TFd3'] * frame['IDF']
@@ -40,6 +47,7 @@ def magnitude(vector):
 
 cosSimilarity = []
 
+# for each tfidf, calculate cosine similarity
 cosSimilarity.append(frame['TFIDFd1'].dot(frame['QueryWeight']) / (magnitude(frame['TFIDFd1']) * magnitude(frame['QueryWeight'])))
 cosSimilarity.append(frame['TFIDFd2'].dot(frame['QueryWeight']) / (magnitude(frame['TFIDFd2']) * magnitude(frame['QueryWeight'])))
 cosSimilarity.append(frame['TFIDFd3'].dot(frame['QueryWeight']) / (magnitude(frame['TFIDFd3']) * magnitude(frame['QueryWeight'])))
