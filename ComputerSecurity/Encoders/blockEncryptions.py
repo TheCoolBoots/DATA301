@@ -6,7 +6,7 @@ def padByteArray(array):
     if(len(array) % blockSizeBytes != 0):
         newLen = (len(array)//blockSizeBytes + 1) * blockSizeBytes
         addedBytes = newLen - len(array)
-        padding = bytearray(b'\x06') * addedBytes
+        padding = bytearray(addedBytes.to_bytes(1, 'little')) * addedBytes
         # print(padding)
         # print(array)
         return array + padding
