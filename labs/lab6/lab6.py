@@ -1,5 +1,6 @@
 import os
 import re
+import math
 import pandas as pd
 import numpy as np
 
@@ -78,7 +79,34 @@ def generateTFIDF(documentFolder):
     return documentFrame, allWordsInDocuments, wordCountPerDocument
 
 
+def calculateQueryFrequencies(documentFrame:pd.DataFrame, rawDocuments:dict, wordCountPerDocument:dict) -> None:
+    for docID, documentContent in rawDocuments.items():
+        colName = 'TFq'+str(docID)
+        documentFrame[colName] = documentFrame['terms'].apply(lambda word: documentContent.count(word)/max(wordCountPerDocument[docID]))
 
+
+def calculateQueryWeights(documentFrame:pd.DataFrame, rawDocuments:dict):
+    for docID in rawDocuments.keys():
+        colName = 'QueryWeight' + str(docID)
+        TFcol = 'TFq'+str(docID)
+        documentFrame[colName] = (.5 + .5 * documentFrame[TFcol]) * documentFrame['IDF']
+
+
+def generateQueryTFIDF(documentFolder:str, allWordsInDocuments:list, IDF:list):
+    rawDocuments = importRawDocuments(documentFolder)
+    wordCountPerDocument = getWordsPerDocument(rawDocuments, allWordsInDocuments)
+
+    documentFrame = pd.DataFrame({'terms': allWordsInDocuments})
+    calculateQueryFrequencies(documentFrame, rawDocuments, wordCountPerDocument)
+
+    documentFrame['IDF'] = IDF
+
+    calculateQueryWeights(documentFrame, rawDocuments)
+
+def magnitude(vector):
+    return math.sqrt(sum(pow(element, 2) for element in vector))
+
+    # calculate query weight for each query document
 
 generateTFIDF('labs/lab6/testFolder')
 
