@@ -1,15 +1,23 @@
-from math import gcd
 from Crypto.Util import number
+from math import gcd
 
 def RSA_encrypt(message:str, e, n):
     byteMessage = bytearray(message, 'ascii')
     intMessage = int.from_bytes(byteMessage, "big")
-    return (intMessage ** e) % n
+    return pow(intMessage, e, n)
 
-def RSA_decrypt(ciphertext, d, n):
-    intMessage = (ciphertext ** d) % n
-    byteMessage = bytearray(intMessage)
-    return byteMessage.decode('ascii')
+def RSA_decrypt(ciphertext:int, d, n):
+    print(ciphertext)
+    messageInt = pow(ciphertext, d) % n
+    print(hex(messageInt))
+    bytetext = messageInt.to_bytes(ciphertext.bit_length()//8 + 1, 'big')
+    # print(bytetext)
+    # print(bytetext.decode('ascii'))
+    return bytetext.decode('ascii')
+
+def multiplicative_inverse(a, m):
+    g, x, y = gcd(a, m)
+    return x % m
 
 def generateKeypairs(bitwidth, e):
     # choose 2 prime numbers p, q
@@ -21,27 +29,18 @@ def generateKeypairs(bitwidth, e):
     # num coprimes with N = (p-1)(q-1) = Phi(N)
     phi = (p-1)*(q-1)
 
-    # choose e such that 1 < e < Phi, e is coprime with N and Phi(N)
-    while e < phi:
-        if gcd(e, phi) == 1:
-            break
-        else:
-            e += 1
-
     # choose d such that (d * e) % Phi(N) = 1
-    k = 2
-    d = (1 + (k*phi))//e
+    inverse = multiplicative_inverse(e, phi)
+    d = pow(inverse, 1, phi)
 
     # public key = (N, e)
     return (n, d)
 
 e = 65537
-keys = generateKeypairs(2048, e)
 
-BobPrivateKey = keys[1]
-n = keys[0]
+BobPrivateKey, n = generateKeypairs(2048, e)
 
-AliceMessage = "Computer Security is Fun!"
+AliceMessage = "YY"
 AliceEncrypted = RSA_encrypt(AliceMessage, e, n)
 
 BobDecrypted = RSA_decrypt(AliceEncrypted, BobPrivateKey, n)
