@@ -1,47 +1,32 @@
 from Crypto.Util import number
-from math import gcd
 
-def RSA_encrypt(message:str, e, n):
-    byteMessage = bytearray(message, 'ascii')
-    intMessage = int.from_bytes(byteMessage, "big")
-    return pow(intMessage, e, n)
+def RSA_encrypt():
+    pass
 
-def RSA_decrypt(ciphertext:int, d, n):
-    print(ciphertext)
-    messageInt = pow(ciphertext, d) % n
-    print(hex(messageInt))
-    bytetext = messageInt.to_bytes(ciphertext.bit_length()//8 + 1, 'big')
-    # print(bytetext)
-    # print(bytetext.decode('ascii'))
-    return bytetext.decode('ascii')
+def RSA_decrypt():
+    pass
 
-def multiplicative_inverse(a, m):
-    g, x, y = gcd(a, m)
-    return x % m
+# Source = https://algorithmist.com/wiki/Modular_inverse
+# Iterative Algorithm (xgcd)
+def iterative_egcd(a, b):
+    x,y, u,v = 0,1, 1,0
+    while a != 0:
+        q,r = b//a,b%a; m,n = x-u*q,y-v*q # use x//y for floor "floor division"
+        b,a, x,y, u,v = a,r, u,v, m,n
+    return b, x, y
 
-def generateKeypairs(bitwidth, e):
-    # choose 2 prime numbers p, q
-    p = number.getPrime(bitwidth)
-    q = number.getPrime(bitwidth)
-    
-    n = p*q
+def modinv(a, m):
+    g, x, y = iterative_egcd(a, m) 
+    if g != 1:
+        return None
+    else:
+        return x % m
 
-    # num coprimes with N = (p-1)(q-1) = Phi(N)
-    phi = (p-1)*(q-1)
-
-    # choose d such that (d * e) % Phi(N) = 1
-    inverse = multiplicative_inverse(e, phi)
-    d = pow(inverse, 1, phi)
-
-    # public key = (N, e)
-    return (n, d)
-
-e = 65537
-
-BobPrivateKey, n = generateKeypairs(2048, e)
-
-AliceMessage = "YY"
-AliceEncrypted = RSA_encrypt(AliceMessage, e, n)
-
-BobDecrypted = RSA_decrypt(AliceEncrypted, BobPrivateKey, n)
-print(BobDecrypted)
+def padString(string):
+    if(len(string) % 16 != 0):
+        newLen = (len(string)//16 + 1) * 16
+        addedBytes = newLen - len(string)
+        padding = chr(newLen) * addedBytes
+        return string + padding
+    else:
+        return string

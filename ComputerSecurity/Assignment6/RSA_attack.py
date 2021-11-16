@@ -12,6 +12,9 @@ def RSA_encrypt(message:str, e, n):
     # print(hex(intMessage))
     return pow(intMessage, e) % n
 
+def multiplicativeInverse(x, p):
+    return pow(x, -1, p)
+
 def RSA_decrypt(ciphertext:int, d, n):
     print(ciphertext)
     messageInt = pow(ciphertext, d) % n
