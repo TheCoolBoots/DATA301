@@ -59,20 +59,27 @@ def calculateTFIDF(rawDocuments:dict, documentFrame:pd.DataFrame):
 
 
 def generateTFIDF(documentFolder):
+    
     rawDocuments = importRawDocuments(documentFolder)
+    print('import done')
     allWordsInDocuments = getListOfAllWords(rawDocuments)
+    print('allWords done')
     wordCountPerDocument = getWordsPerDocument(rawDocuments, allWordsInDocuments)
+    print('wordCountPerDoc')
 
     documentFrame = pd.DataFrame({'terms': allWordsInDocuments})
 
     calculateTermFrequencies(documentFrame, rawDocuments, wordCountPerDocument)
+    print('calculatedTermFrequency')
 
     documentFrequency = getDocumentFrequency(wordCountPerDocument, allWordsInDocuments)
+    print('calculatedDocumentFrequency')
 
     documentFrame['DF'] = documentFrequency
     documentFrame['IDF'] = np.log2(len(rawDocuments.keys())/documentFrame['DF'])
 
     calculateTFIDF(rawDocuments, documentFrame)
+    print('calculatedTFIDF')
 
     return documentFrame, allWordsInDocuments, wordCountPerDocument, len(rawDocuments)
 
