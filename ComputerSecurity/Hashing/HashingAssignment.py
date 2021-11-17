@@ -2,6 +2,8 @@ from Crypto.Hash import SHA256
 import datetime as t
 import os
 import bcrypt
+from nltk.corpus import words
+import nltk
 
 def task1_a():
     shaHash = SHA256.new()  
@@ -49,9 +51,27 @@ def task1_c_generateData():
         print(f'Digest Size = {i}')
         task1_c(i)
 
+def importUserHashes(filepath):
+    with open(filepath) as inputFile:
+        contents = inputFile.read().split('\n')
+    userHashes = {}
+    for user in contents:
+        name = user[0:user.index(':')]
+        saltHash = user[user.index(':') + 1:]
+        userHashes[name] = {'salt':saltHash[0:29], 'hash':saltHash[29:]}
+    return userHashes
+
+
 def task2():
-    password = b'genius'
-    hashed = bcrypt.hashpw(password, bcrypt.gensalt())
-    print(hashed)
+    userHashes = importUserHashes('ComputerSecurity\Hashing\shadow.txt')
+    nltk.download('words')
+    filtered = list(filter(lambda word: len(word) >= 6 and len(word) <= 10, words.words()))
+
+    for word in filtered: 
+        for user, saltHash in userHashes.items():
+            wordHash = bcrypt.hashpw(bytes(word, 'ascii'), bytes(saltHash['salt'], 'ascii'))
+            if(wordHash == saltHash['hash']):
+                print(f"{user}'s password is: {word}")
+
 
 task2()

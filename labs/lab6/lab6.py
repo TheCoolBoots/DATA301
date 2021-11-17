@@ -29,12 +29,17 @@ def getListOfAllWords(rawDocuments:dict) -> list:
 
 def getWordsPerDocument(rawDocuments:dict, allWordsInDocuments:list) -> dict:
     wordCountsPerDocument = {}
+    wordIndexes = {}    # instead of iterating through list to find index, just lookup in dictionary
+                        # probably much more efficient
+
+    for i, word in enumerate(allWordsInDocuments):
+        wordIndexes[word] = i
+
     for docID, documentContent in rawDocuments.items():
         wordCounts = np.array([0] * len(allWordsInDocuments))
         for word in documentContent:
-            wordCounts[allWordsInDocuments.index(word)] += 1
+            wordCounts[wordIndexes[word]] += 1
         wordCountsPerDocument[docID] = wordCounts
-        # print(sum(wordCounts) == len(documentContent.split(' ')))
     return wordCountsPerDocument
 
 
@@ -198,3 +203,4 @@ mostSimilarDocuments = getTop20Similar(testDocuments[0], testQueries, testDocume
 humanSimilarDocs = getRelevantDocsPerQuery('labs/lab6/human_judgement.txt')
 
 mapScores = calcAllMAPScores(humanSimilarDocs, mostSimilarDocuments)
+print(mapScores)
