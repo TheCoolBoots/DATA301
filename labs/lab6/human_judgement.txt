@@ -1,3 +1,4 @@
+queryNum docNum relevance empty
 1 184 2 
 1 29 2 
 1 31 2 

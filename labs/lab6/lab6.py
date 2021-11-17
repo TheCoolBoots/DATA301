@@ -15,8 +15,6 @@ def importRawDocuments(documentFolder:str = "") -> dict:
         fileContents = fileContents.replace(',', '')
         re.sub(r'[^A-Za-z ]', '', fileContents)
         fileContents = fileContents.split(' ')
-        while '' in fileContents:
-            fileContents
         rawDocuments[docNum] = fileContents
         
     return rawDocuments
@@ -76,7 +74,7 @@ def generateTFIDF(documentFolder):
 
     calculateTFIDF(rawDocuments, documentFrame)
 
-    return documentFrame, allWordsInDocuments, wordCountPerDocument
+    return documentFrame, allWordsInDocuments, wordCountPerDocument, len(rawDocuments)
 
 
 def calculateQueryFrequencies(documentFrame:pd.DataFrame, rawDocuments:dict, wordCountPerDocument:dict) -> None:
@@ -89,7 +87,8 @@ def calculateQueryWeights(documentFrame:pd.DataFrame, rawDocuments:dict):
     for docID in rawDocuments.keys():
         colName = 'QueryWeight' + str(docID)
         TFcol = 'TFq'+str(docID)
-        documentFrame[colName] = (.5 + .5 * documentFrame[TFcol]) * documentFrame['IDF']
+        # documentFrame[colName] = (.5 + .5 * documentFrame[TFcol]) * documentFrame['IDF']
+        documentFrame[colName] = documentFrame[TFcol] * documentFrame['IDF']
 
 
 def generateQueryTFIDF(documentFolder:str, allWordsInDocuments:list, IDF:list):
@@ -103,14 +102,99 @@ def generateQueryTFIDF(documentFolder:str, allWordsInDocuments:list, IDF:list):
 
     calculateQueryWeights(documentFrame, rawDocuments)
 
+    return documentFrame
+
 def magnitude(vector):
     return math.sqrt(sum(pow(element, 2) for element in vector))
 
-    # calculate query weight for each query document
+def calculateCosineSimilarity(docName:str, queryName:str, documentFrame:pd.DataFrame, queryFrame:pd.DataFrame):
+    return math.acos(documentFrame[docName].dot(queryFrame[queryName])/(magnitude(documentFrame[docName]) * magnitude(queryFrame[queryName])))
+    # return documentFrame[docName].dot(queryFrame[queryName])/(magnitude(documentFrame[docName]) * magnitude(queryFrame[queryName]))
 
-generateTFIDF('labs/lab6/testFolder')
+def getMostSimilarDocuments(queryNum, documentFrame, queryFrame, numDocuments):
+    docNumbers = range(1, numDocuments+1)
+    similarities = []
+    for docNum in docNumbers:
+        docName = 'TFIDFd' + str(docNum)
+        queryName = 'QueryWeight' + str(queryNum)
+        similarities.append(calculateCosineSimilarity(docName, queryName, documentFrame, queryFrame))
+    similaritiesFrame = pd.DataFrame({'cosSimilarity':similarities}, index=docNumbers)
+    # similaritiesFrame.sort_values(by='cosSimilarity', ascending=False, inplace=True)
+    similaritiesFrame.sort_values(by='cosSimilarity', ascending=True, inplace=True)
+    if(numDocuments < 20):
+        return similaritiesFrame.iloc[0:numDocuments]
+    else:
+        return similaritiesFrame.iloc[0:20]
 
-    # test to see if all words are being counted
-    # for wordCount in wordCountPerDocument.values():
-    #     print(len(allWordsInDocuments) == len(wordCount))
-    # print(wordCountPerDocument)
+def getTop20Similar(documentFrame, queryFrame, numDocuments):
+    if len(queryFrame < 20):
+        numQueries = len(queryFrame)
+    else:
+        numQueries = 20
+
+    similarList = []
+
+    for i in range(0, numQueries):
+        similarSeries = getMostSimilarDocuments(i, documentFrame, queryFrame, numDocuments)
+        similarList.append(similarSeries.index)
+
+    output = pd.Series(similarList, index = range(0, numQueries))
+
+    return output
+
+def getRelevantDocsPerQuery(judgementFile):
+    data = pd.read_csv(judgementFile,sep=' ')
+    data.drop(columns='empty', inplace=True)
+    data = data[data['relevance'] < 4]
+    data = data[data['relevance'] > 0]
+
+    mapping = {}
+    for query in data['queryNum'].drop_duplicates():
+        mapping[query] = []
+
+    for i in range(0, len(data.index)):
+        mapping[data.iloc[i]['queryNum']].append(data.iloc[i]['docNum'])
+
+    print(mapping)
+    
+    return mapping
+
+def calcMAPScore(humanList, computerList):
+    numShared = 0
+    mapScore = 0
+    for i, docNum in enumerate(computerList):
+        if docNum in humanList:
+            numShared += 1
+        mapScore += numShared/i
+
+    return mapScore/len(humanList)
+
+def calcAllMAPScores(humanJudgement, compJudgement):
+    mapScores = {}
+    for query in compJudgement.index:
+        mapScores[query] = calcMAPScore(humanJudgement[query], compJudgement[query])
+    
+    return pd.DataFrame({'docNum':mapScores.keys(), 'mapScore':mapScores.values()})
+
+
+
+testDocuments = generateTFIDF('labs/lab6/documents')
+testQueries = generateQueryTFIDF('labs/lab6/queries', testDocuments[1], testDocuments[0]['IDF'])
+
+print(testDocuments[0])
+print(testQueries)
+
+print(getMostSimilarDocuments(1, testDocuments[0], testQueries, 5))
+
+mostSimilarDocuments = getTop20Similar(testDocuments[0], testQueries, testDocuments[3])
+
+# print(mostSimilarDocuments)
+
+# test to see if all words are being counted
+# for wordCount in wordCountPerDocument.values():
+#     print(len(allWordsInDocuments) == len(wordCount))
+# print(wordCountPerDocument)
+
+humanSimilarDocs = getRelevantDocsPerQuery('labs/lab6/human_judgement.txt')
+
+mapScores = calcAllMAPScores(humanSimilarDocs, mostSimilarDocuments)

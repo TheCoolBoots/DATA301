@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-file = open('recipes.txt', encoding='utf8')
+file = open('labs/recipes.txt', encoding='utf8')
 data = json.load(file)
 
 recipeNames = []
@@ -29,6 +29,8 @@ for recipe in data:
 
 dataframe = pd.DataFrame({'recipeNames':recipeNames,
                             'ingredientList':recipeIngredients}).set_index('recipeNames')
+
+print(dataframe)
 
 allIngredients = set()
 
