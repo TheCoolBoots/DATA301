@@ -1,32 +1,27 @@
-import unittest
-import randomFeatures
+import numpy as np
+import pandas as pd
 
-class t_randomFeatures(unittest.TestCase):
+"""queryNum docNum relevance empty
+1 1 2
+1 2 1
+1 3 2
+1 4 4
+1 5 -1"""
 
-    def test_getRandom(self):
-        randomNum = randomFeatures.getRandomSmallInt()
-        self.assertTrue(0 <= randomNum and randomNum <= 9)
+queryNums = np.arange(start=1, stop=21)
+queryNums = np.append(queryNums, queryNums)
+queryNums = np.append(queryNums, queryNums)
+queryNums = np.sort(queryNums)
 
-    def test_failure(self):
-        self.assertTrue(False)
+docNums = np.random.randint(1, 101, 80)
 
+relevance = np.random.randint(-1, 4, 80)
 
-if __name__ == '__main__':
-    unittest.main()
+dataFrame = pd.DataFrame({'queryNum':queryNums,'docNum':docNums,'relevance':relevance,'empty':[None]*80})
+# dataFrame.set_index('queryNum', inplace=True)
 
-"""
-C#
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+print(dataFrame)
 
-namespace BankTests
-{
-    [TestClass]
-    public class BankAccountTests
-    {
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
-    }
-}
-"""
+dataFrame.to_csv('humanJudgementTest',sep=' ', index=None,mode='a')
+# np.savetxt('humanJudgementTest', dataFrame.values)
+# with open('humanJudgements', 'w+') as file:

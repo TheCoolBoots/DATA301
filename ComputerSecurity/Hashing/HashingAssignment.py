@@ -52,13 +52,13 @@ def task1_c_generateData():
         task1_c(i)
 
 def importUserHashes(filepath):
-    with open(filepath) as inputFile:
-        contents = inputFile.read().split('\n')
+    with open(filepath, 'rb') as inputFile:
+        contents = inputFile.readlines()
     userHashes = {}
     for user in contents:
-        name = user[0:user.index(':')]
-        saltHash = user[user.index(':') + 1:]
-        userHashes[name] = {'salt':saltHash[0:29], 'hash':saltHash[29:]}
+        name = user[0:user.index(b':')]
+        saltHash = user[user.index(b':') + 1:]
+        userHashes[name] = {'salt':saltHash[0:29], 'hash':saltHash[29:], 'saltHash':saltHash}
     return userHashes
 
 
@@ -66,12 +66,19 @@ def task2():
     userHashes = importUserHashes('ComputerSecurity\Hashing\shadow.txt')
     nltk.download('words')
     filtered = list(filter(lambda word: len(word) >= 6 and len(word) <= 10, words.words()))
+    filtered = [s.encode() for s in filtered]
 
-    for word in filtered: 
-        for user, saltHash in userHashes.items():
-            wordHash = bcrypt.hashpw(bytes(word, 'ascii'), bytes(saltHash['salt'], 'ascii'))
-            if(wordHash == saltHash['hash']):
+    hash = bcrypt.hashpw(b"registrationsucks", b"$2b$08$J9FW66ZdPI2nrIMcOxFYI.")
+    print(bcrypt.checkpw(b'registrationsucks', hash))
+
+    print(len(filtered))
+    
+    for user, saltHash in userHashes.items():
+        for i, word in enumerate(filtered): 
+            if(bcrypt.checkpw(word, saltHash['saltHash'])):
                 print(f"{user}'s password is: {word}")
+            if(i%10000 == 0):
+                print(f'{i} words attempted for {user}')
 
 
 task2()
