@@ -32,7 +32,7 @@ def task1_c(hashWidth):
         shaHash.update(bytes(currentNum))
         currentHash = shaHash.hexdigest()[0:hashWidth]
 
-        if currentHash not in attemptedHashes:
+        if attemptedHashes[currentHash] == None:
             attemptedHashes[currentHash] = currentNum
         elif attemptedHashes[currentHash] != currentNum:
             print(f'{currentNum} and {attemptedHashes[currentHash]} both share the first {hashWidth} bytes: {currentHash}')
